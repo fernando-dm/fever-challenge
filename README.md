@@ -8,15 +8,17 @@ The developed solution is divided into two microservices, both developed in Java
 # Installation
 Download both projects and open them in IntelliJ:
 
-- fever-external: 
+- fever-external: "https://github.com/fernando-dm/fever-challenge-external/"
   - `gradle wrapper`
   - `./gradlew clean build buildDockerImage -PSPRING_PROFILE=local`
   - `docker run -d -p 8080:8080 --name fever-external -e spring_profile=local fever-external:1.0-SNAPSHOT`
-- fever-challenge
+  
+
+- fever-challenge: "https://github.com/fernando-dm/fever-challenge"
    - `gradle wrapper`
    - Use the app from the IDE for this test (ver notas). ***
 
-## Requerimientos
+## Requirements:
 
 
 # Fever code challenge
