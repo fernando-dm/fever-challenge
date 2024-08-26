@@ -1,0 +1,91 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.1.0'
+}
+
+ext {
+    appGroup = 'com.fever'
+    appVersion = '1.0-SNAPSHOT'
+    appArtifactId = 'fever-challenge'
+    appDescription = 'fever-challenge ms'
+
+    javaVersion = 17
+    springVersion = '3.1.0'
+    cucumberVersion = '7.11.2'
+    lombokVersion = '1.18.28'
+
+}
+
+group = appGroup
+version = appVersion
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot
+    implementation "org.springframework.boot:spring-boot-starter-web:${springVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springVersion}"
+    testImplementation 'org.projectlombok:lombok:1.18.28'
+
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    // slf4j
+    implementation 'org.slf4j:log4j-over-slf4j:1.7.30'
+
+    // JAXB API (Jakarta XML Bind API)
+    implementation 'jakarta.xml.bind:jakarta.xml.bind-api:3.0.1'
+
+    // JAXB Runtime (Reference Implementation)
+    implementation 'org.glassfish.jaxb:jaxb-runtime:3.0.2'
+
+
+    // Test
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation platform('org.junit:junit-bom:5.9.2')
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.2'
+    testImplementation 'org.mockito:mockito-core:5.2.0'
+
+    // Health check
+    implementation "org.springframework.boot:spring-boot-starter-actuator:${springVersion}"
+}
+
+test {
+    useJUnitPlatform()
+}
+// tasks para GitLab-CI (se pueden usar para versionar con los nros de version del build.gradle)
+task printArtifactId { doLast { println appArtifactId } }
+task printArtifactVersion { doLast { println appVersion } }
+
+
+task printJarFileName {
+    doLast {
+        def jarFileName = jar.archiveFileName.get()
+        println "Jar file name: $jarFileName"
+        println "Jar file name: ${appArtifactId} ${appVersion}"
+    }
+}
+
+task buildDockerImage(type: Exec) {
+    dependsOn assemble
+
+    def dockerfilePath = '.'
+
+    // Get the JAR file name from Gradle
+    def jarFileName = "$appArtifactId-${appVersion}.jar"
+
+    def springProfile = project.hasProperty('SPRING_PROFILE') ? project.property('SPRING_PROFILE') : 'local'
+
+    // Build the Docker image
+    commandLine 'docker', 'build', '-t', "${appArtifactId}:${appVersion}", '--build-arg', "SPRING_PROFILE=${springProfile}", '--build-arg', "JAR_FILE=${jarFileName}", "${dockerfilePath}"
+
+    // Show the Docker build output in the console
+    standardOutput = System.out
+    errorOutput = System.err
+}
+
+
+

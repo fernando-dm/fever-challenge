@@ -1,0 +1,25 @@
+version: '3.8'
+services:
+  fever-events:
+    container_name: fever-challenge
+    image: fever-challenge:1.0-SNAPSHOT
+    ports:
+      - "8081:8081"
+    environment:
+      - spring_profile=local
+    networks:
+      - fever-network
+
+  external-service:
+    container_name: fever-external
+    image: fever-external:1.0-SNAPSHOT
+    ports:
+      - "8080:8080"
+    environment:
+      - spring_profile=local
+    networks:
+      - fever-network
+
+networks:
+  fever-network:
+    driver: bridge

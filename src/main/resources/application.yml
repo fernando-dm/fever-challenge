@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: ${spring_profile}
+
+server:
+  port: 8081
+  servlet:
+    context-path: /events
+
+client:
+  type: external-service # es binario, o uso la mock o la real
+  url: http://localhost:8080/external/api/xml
